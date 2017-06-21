@@ -78,11 +78,5 @@ Outputs:
   ##   Export:
   ##       Name: !Sub "${AWS::StackName}-dns"
 
-  ## instance:
-  ##   Description: EC2 instance that belongs to our cluster
-  ##   Value: !Ref clusterInstance
-  ##   Export:
-  ##       Name: !Sub "${AWS::StackName}-instance"
-
 
 AWSTemplateFormatVersion: '2010-09-09'

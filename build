@@ -3,5 +3,5 @@
 set -euo pipefail
 export IFS=$'\n\t'
 
-
-docker build . -t brightmd/s3duplyrestore:latest
+version=`git describe --all --long | sed s,'^.*/',,`
+docker build . -t brightmd/s3duplyrestore:latest -t brightmd/s3duplyrestore:$version
