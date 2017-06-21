@@ -1,0 +1,88 @@
+# creates the unique singleton resources required by the nomsite stacks
+Resources:
+    ecsTaskS3Everything:
+        Type: "AWS::IAM::Role"
+        Properties:
+            RoleName: 'ecsTaskS3Everything'
+            AssumeRolePolicyDocument:
+                Version: 2008-10-17
+                Statement:
+                    Effect: Allow
+                    Principal:
+                        Service: ecs-tasks.amazonaws.com
+                    Action: 'sts:AssumeRole'
+  
+            ManagedPolicyArns:
+            - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+            - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+
+    s3duplyrestore:
+        Type: AWS::ECS::TaskDefinition
+        Properties:
+            Family: s3duplyrestore
+            TaskRoleArn: !Sub "arn:aws:iam::${AWS::AccountId}:role/${ecsTaskS3Everything}"
+            ContainerDefinitions:
+            - Name: s3duplyrestore
+              Image: !Sub "brightmd/s3duplyrestore:latest"
+              Memory: 128
+              Essential: true
+              Cpu: 0
+              Environment:
+              - { Name: hostToRestore, Value: !Ref hostToRestore }
+              - { Name: gpgPassword, Value: !Ref gpgPassword }
+        DependsOn:
+        - ecsTaskS3Everything
+  
+    svcs3duplyrestore:
+        Type: AWS::ECS::Service
+        Properties:
+            TaskDefinition: !Ref s3duplyrestore
+            DesiredCount: 1
+        DependsOn:
+        - s3duplyrestore
+  
+    ## ecsRR:
+    ##     Type: AWS::Route53::RecordSet
+    ##     Properties:
+    ##         HostedZoneName: "duplyrestorebook.com."
+    ##         Name: !Sub '${ecsInstanceName}.'
+    ##         Type: CNAME
+    ##         TTL: 300
+    ##         ResourceRecords:
+    ##         - !GetAtt clusterInstance.PublicDnsName
+    ##     DependsOn:
+    ##     - clusterInstance
+
+
+Parameters:
+    hostToRestore:
+        Type: String
+        Default: color-partnerhost.smartexam.com
+        Description: Enter the name of the host we'll restore from
+
+    gpgPassword:
+        Type: String
+        Description: Enter the gpg password used to encrypt the backups
+
+
+Outputs:
+    taskRole:
+        Description: Role to allow the ECS task to do its work
+        Value: !Ref ecsTaskS3Everything
+        Export:
+            Name: !Sub "${AWS::StackName}-taskRole"
+
+  ## dns:
+  ##   Description: Public DNS name of our cluster's host
+  ##   Value: !Ref ecsRR
+  ##   Export:
+  ##       Name: !Sub "${AWS::StackName}-dns"
+
+  ## instance:
+  ##   Description: EC2 instance that belongs to our cluster
+  ##   Value: !Ref clusterInstance
+  ##   Export:
+  ##       Name: !Sub "${AWS::StackName}-instance"
+
+
+AWSTemplateFormatVersion: '2010-09-09'

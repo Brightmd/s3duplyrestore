@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -euo pipefail
+export IFS=$'\n\t'
+
+
+docker build . -t brightmd/s3duplyrestore:latest
