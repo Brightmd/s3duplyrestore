@@ -1,6 +1,4 @@
-DUPL_PARAMS="$DUPL_PARAMS --s3-use-multiprocessing --s3-use-new-style -v3 "
+DUPL_PARAMS="$DUPL_PARAMS -v3 "
 GPG_PW='{{ gpgPassword }}'
 SOURCE='/'
-TARGET='s3+http://backup.{{ hostToRestore }}/'
-# TARGET_USER='{{ AWS_ACCESS_KEY_ID }}'
-# TARGET_PASS='{{ AWS_SECRET_ACCESS_KEY }}'
+TARGET='file:///opt/s3duplyrestore/backup.{{ hostToRestore }}/'
