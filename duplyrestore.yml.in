@@ -11,7 +11,7 @@ Resources:
                     Principal:
                         Service: ecs-tasks.amazonaws.com
                     Action: 'sts:AssumeRole'
-  
+
             ManagedPolicyArns:
             - "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
             - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
@@ -32,7 +32,7 @@ Resources:
               - { Name: gpgPassword, Value: !Ref gpgPassword }
         DependsOn:
         - ecsTaskS3Everything
-  
+
     svcs3duplyrestore:
         Type: AWS::ECS::Service
         Properties:
@@ -40,7 +40,7 @@ Resources:
             DesiredCount: 1
         DependsOn:
         - s3duplyrestore
-  
+
     ## ecsRR:
     ##     Type: AWS::Route53::RecordSet
     ##     Properties:
